@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -e
+
+APP_NAME="./bin/api-gateway"
+MAIN_FILE="main.go"
+
+function build() {
+    echo "Building $APP_NAME..."
+    go build -o "$APP_NAME" "$MAIN_FILE"
+    echo "Build complete: ./$APP_NAME"
+}
+
+function run() {
+    echo "Running $APP_NAME..."
+    go run "$MAIN_FILE"
+}
+
+function coverage() {
+    go test -short -count=1 -race -coverprofile=coverage.out ./...
+    go tool cover -html=coverage.out
+    rm coverage.out
+}
+
+function help() {
+    echo "Usage: $0 <command>"
+    echo ""
+    echo "Commands:"
+    echo "  build    Build the Go application"
+    echo "  run      Run the Go application"
+    echo "  help     Show this help message"
+    echo "  coverage Test & coverage"
+}
+
+case "$1" in
+    build)
+        build
+        ;;
+    run)
+        run
+        ;;
+    coverage)
+        coverage
+        ;;
+    help|--help|-h|"")
+        help
+        ;;
+    *)
+        echo "Unknown command: $1"
+        help
+        exit 1
+        ;;
+esac

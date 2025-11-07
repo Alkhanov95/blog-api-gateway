@@ -1,0 +1,200 @@
+definitions:
+  models.CreatePostRequest:
+    properties:
+      author:
+        maxLength: 255
+        type: string
+      content:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+    required:
+    - author
+    - title
+    type: object
+  models.PostDTO:
+    properties:
+      author:
+        type: string
+      content:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+  models.UpdatePostRequest:
+    properties:
+      author:
+        maxLength: 255
+        type: string
+      content:
+        type: string
+      id:
+        minimum: 0
+        type: integer
+      title:
+        maxLength: 255
+        type: string
+    required:
+    - author
+    - id
+    - title
+    type: object
+info:
+  contact: {}
+paths:
+  /posts:
+    get:
+      description: Получить список всех постов
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/models.PostDTO'
+              type: array
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Список постов
+      tags:
+      - posts
+    post:
+      consumes:
+      - application/json
+      description: Создать новый пост
+      parameters:
+      - description: Данные поста
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ID созданного поста
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Ошибка валидации
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Создать пост
+      tags:
+      - posts
+    put:
+      consumes:
+      - application/json
+      description: Обновить существующий пост
+      parameters:
+      - description: Данные для обновления
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ID обновленного поста
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Ошибка валидации
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Пост не найден
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Обновить пост
+      tags:
+      - posts
+  /posts/{id}:
+    delete:
+      description: Удалить пост по идентификатору
+      parameters:
+      - description: ID поста
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Пост удален
+        "400":
+          description: Некорректный ID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Пост не найден
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Удалить пост
+      tags:
+      - posts
+    get:
+      description: Получить пост по идентификатору
+      parameters:
+      - description: ID поста
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PostDTO'
+        "400":
+          description: Некорректный ID
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Пост не найден
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Получить пост
+      tags:
+      - posts
+swagger: "2.0"
